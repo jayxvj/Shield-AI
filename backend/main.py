@@ -6,6 +6,15 @@ import logging
 from backend.config import settings
 from backend.database import engine, Base
 from backend.routers import threats
+try:
+    from backend.routers import live_monitoring as live_monitoring_router
+    _LIVE_MONITORING_AVAILABLE = True
+except Exception as _lm_import_err:
+    import logging as _lm_log
+    _lm_log.getLogger(__name__).warning(
+        "Live monitoring module failed to load (existing app unaffected): %s", _lm_import_err
+    )
+    _LIVE_MONITORING_AVAILABLE = False
 
 # Configure logging
 logging.basicConfig(
@@ -45,6 +54,14 @@ app.add_middleware(
 
 # Include routers
 app.include_router(threats.router, prefix="/api/v1/threats", tags=["threats"])
+
+# Live monitoring router — additive only, wrapped in try/except for safety
+if _LIVE_MONITORING_AVAILABLE:
+    app.include_router(
+        live_monitoring_router.router,
+        prefix="/api/live-monitoring",
+        tags=["live-monitoring"],
+    )
 
 
 @app.get("/")

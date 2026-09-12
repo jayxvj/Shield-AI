@@ -3,18 +3,19 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Shield, 
-  LayoutDashboard, 
-  Network, 
-  ShieldAlert, 
+import {
+  Shield,
+  LayoutDashboard,
+  Network,
+  ShieldAlert,
   Activity,
-  Settings, 
+  Settings,
   CreditCard,
-  Cpu, 
-  Layers, 
-  Database, 
-  X 
+  Cpu,
+  Layers,
+  Database,
+  X,
+  Radio,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -38,6 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'Alerts', label: 'Alerts', href: '/alerts', icon: Network, badge: 'Live' },
     { id: 'Analytics', label: 'Analytics', href: '/analytics', icon: ShieldAlert, badge: '38 High' },
     { id: 'Model Performance', label: 'Model Performance', href: '/model-performance', icon: Activity, badge: '96.8%' },
+    { id: 'Live Monitoring', label: 'Live Monitoring', href: '/live-monitoring', icon: Radio, badge: 'New' },
     { id: 'Subscription', label: 'Subscription', href: '/subscription', icon: CreditCard, badge: 'Plans' },
     { id: 'Settings', label: 'Settings', href: '/settings', icon: Settings, badge: null },
   ];
