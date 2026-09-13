@@ -348,8 +348,48 @@ export default function LiveMonitoringPage() {
         </div>
       </div>
 
-      {/* Error banner */}
-      {errorMessage && (
+      {/* Cloud-mode notice — shown when backend is unreachable (normal on Vercel) */}
+      {connectionState === 'error' && (
+        <div className="flex items-start gap-4 p-5 rounded-xl bg-[#1A1F2B] border border-[#EECC8C]/30">
+          <div className="p-2.5 rounded-lg bg-[#EECC8C]/10 border border-[#EECC8C]/20 shrink-0">
+            <Info className="w-4 h-4 text-[#EECC8C]" />
+          </div>
+          <div className="space-y-2 min-w-0">
+            <p className="text-sm font-semibold text-white">Live Capture Requires Local Backend</p>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Live packet capture uses <span className="text-[#EECC8C] font-mono">Scapy</span> to monitor your
+              network interface in real time. Cloud servers cannot access physical network adapters, so this
+              feature must run on your own machine.
+            </p>
+            <div className="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-white/[0.04] border border-white/[0.08]">
+                <Terminal className="w-3.5 h-3.5 text-[#BDD1C5] shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-white mb-1">Step 1 — Start local backend</p>
+                  <p className="font-mono text-[10px] text-gray-400 break-all">
+                    Right-click start-backend.bat → Run as Administrator
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-white/[0.04] border border-white/[0.08]">
+                <Wifi className="w-3.5 h-3.5 text-[#BDD1C5] shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-white mb-1">Step 2 — Open local dashboard</p>
+                  <p className="font-mono text-[10px] text-gray-400">
+                    http://localhost:3000/live-monitoring
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p className="text-[11px] text-gray-500">
+              All other dashboard pages (Alerts, Analytics, Threat Intel…) continue working normally on this deployment.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Non-cloud error banner — shown for other errors when backend is reachable */}
+      {errorMessage && connectionState !== 'error' && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-[#A36361]/10 border border-[#A36361]/30 text-sm text-[#A36361]">
           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
           <div>
