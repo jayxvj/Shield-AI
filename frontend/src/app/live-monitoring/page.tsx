@@ -348,8 +348,8 @@ export default function LiveMonitoringPage() {
         </div>
       </div>
 
-      {/* Cloud-mode notice — shown when backend is unreachable (normal on Vercel) */}
-      {connectionState === 'error' && (
+      {/* Cloud-mode notice — shown when Scapy is unavailable (cloud/Render) or backend unreachable */}
+      {(connectionState === 'error' || connectionState === 'disabled') && (
         <div className="flex items-start gap-4 p-5 rounded-xl bg-[#1A1F2B] border border-[#EECC8C]/30">
           <div className="p-2.5 rounded-lg bg-[#EECC8C]/10 border border-[#EECC8C]/20 shrink-0">
             <Info className="w-4 h-4 text-[#EECC8C]" />
@@ -388,8 +388,8 @@ export default function LiveMonitoringPage() {
         </div>
       )}
 
-      {/* Non-cloud error banner — shown for other errors when backend is reachable */}
-      {errorMessage && connectionState !== 'error' && (
+      {/* Non-cloud error banner — shown for other errors when backend is reachable and capture is available */}
+      {errorMessage && connectionState !== 'error' && connectionState !== 'disabled' && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-[#A36361]/10 border border-[#A36361]/30 text-sm text-[#A36361]">
           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
           <div>
