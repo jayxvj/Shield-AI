@@ -4,26 +4,30 @@ from typing import List
 
 class Settings(BaseSettings):
     """Application settings"""
-    
+
     # Application
     APP_NAME: str = "AI Security Threat Detection System"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
-    
+
     # Database
     DATABASE_URL: str = "sqlite:///./security_threats.db"
-    
-    # CORS
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
-    
+
+    # CORS — comma-separated list in env var, e.g.:
+    #   ALLOWED_ORIGINS=https://your-app.vercel.app,http://localhost:3000
+    ALLOWED_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:8000",
+    ]
+
     # Security
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
+
     # API
     API_V1_PREFIX: str = "/api/v1"
-    
+
     class Config:
         env_file = ".env"
         case_sensitive = True
