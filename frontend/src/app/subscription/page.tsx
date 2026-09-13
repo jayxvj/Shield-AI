@@ -23,7 +23,7 @@ export default function SubscriptionPage() {
       id: 'community',
       name: 'Community',
       badge: null,
-      price: '$0',
+      price: '₹0',
       period: 'Free forever',
       description: 'Developers & students testing the platform.',
       popular: false,
@@ -43,7 +43,7 @@ export default function SubscriptionPage() {
       id: 'starter',
       name: 'Starter',
       badge: null,
-      price: billingCycle === 'annual' ? '$159' : '$199',
+      price: billingCycle === 'annual' ? '₹159' : '₹199',
       period: billingCycle === 'annual' ? 'per month, billed annually' : 'per month, billed monthly',
       description: 'Small SOC teams and growing security operations.',
       popular: false,
@@ -64,7 +64,7 @@ export default function SubscriptionPage() {
       id: 'professional',
       name: 'Professional',
       badge: 'MOST POPULAR',
-      price: billingCycle === 'annual' ? '$559' : '$699',
+      price: billingCycle === 'annual' ? '₹559' : '₹699',
       period: billingCycle === 'annual' ? 'per month, billed annually' : 'per month, billed monthly',
       description: 'Enterprise SOC teams requiring automated XAI triage.',
       popular: true,
@@ -125,7 +125,7 @@ export default function SubscriptionPage() {
         <div className="inline-flex items-center p-1 rounded-xl bg-gray-100 dark:bg-[#1A1F2B] border border-gray-200 dark:border-white/10 mt-6 shadow-sm">
           <button
             onClick={() => setBillingCycle('monthly')}
-            className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+            className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ₹{
               billingCycle === 'monthly'
                 ? 'bg-white dark:bg-[#0B0F19] text-gray-900 dark:text-white shadow-sm'
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -135,7 +135,7 @@ export default function SubscriptionPage() {
           </button>
           <button
             onClick={() => setBillingCycle('annual')}
-            className={`px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 ${
+            className={`px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 ₹{
               billingCycle === 'annual'
                 ? 'bg-white dark:bg-[#0B0F19] text-gray-900 dark:text-white shadow-sm'
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -156,7 +156,7 @@ export default function SubscriptionPage() {
           return (
             <div
               key={plan.id}
-              className={`h-full flex flex-col justify-between rounded-2xl bg-white dark:bg-[#1A1F2B] p-6 transition-all duration-300 relative shadow-sm hover:shadow-xl ${
+              className={`h-full flex flex-col justify-between rounded-2xl bg-white dark:bg-[#1A1F2B] p-6 transition-all duration-300 relative shadow-sm hover:shadow-xl ₹{
                 plan.popular
                   ? 'border-2 border-[#EECC8C] ring-2 ring-[#EECC8C]/20 dark:shadow-[0_0_25px_rgba(238,204,140,0.15)]'
                   : 'border border-gray-200 dark:border-white/[0.08] hover:border-gray-300 dark:hover:border-white/20'
@@ -176,7 +176,7 @@ export default function SubscriptionPage() {
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5">
                     <div className="p-2 rounded-lg bg-gray-50 dark:bg-[#0B0F19] border border-gray-200 dark:border-white/5">
-                      <IconComponent className={`w-4 h-4 ${plan.iconColor}`} />
+                      <IconComponent className={`w-4 h-4 ₹{plan.iconColor}`} />
                     </div>
                     <h3 className="text-base font-bold text-gray-900 dark:text-white">
                       {plan.name}
@@ -194,7 +194,7 @@ export default function SubscriptionPage() {
                     <span className="text-3xl sm:text-4xl font-extrabold font-mono text-gray-900 dark:text-white tracking-tight">
                       {plan.price}
                     </span>
-                    {plan.price !== '$0' && plan.price !== 'Custom' && (
+                    {plan.price !== '₹0' && plan.price !== 'Custom' && (
                       <span className="text-xs text-gray-400 font-mono">/mo</span>
                     )}
                   </div>
@@ -223,7 +223,7 @@ export default function SubscriptionPage() {
               <div className="mt-8 pt-4 border-t border-gray-100 dark:border-white/5">
                 <button
                   type="button"
-                  className={`w-full py-2.5 px-4 rounded-xl font-semibold text-xs transition-all duration-200 flex items-center justify-center gap-2 ${plan.ctaStyle}`}
+                  className={`w-full py-2.5 px-4 rounded-xl font-semibold text-xs transition-all duration-200 flex items-center justify-center gap-2 ₹{plan.ctaStyle}`}
                 >
                   <span>{plan.ctaText}</span>
                   <ArrowRight className="w-3.5 h-3.5 opacity-80" />

@@ -169,20 +169,20 @@ export const TopBar: React.FC<TopBarProps> = ({
             </div>
             <div className="hidden xl:block text-left">
               <p className="text-xs font-semibold text-gray-900 dark:text-white leading-tight flex items-center gap-1.5">
-                <span>Alex Vance</span>
+                <span>ADMIN PANEL</span>
                 <span className="text-[9px] px-1.5 py-0.2 bg-[#EECC8C]/20 text-yellow-800 dark:text-[#EECC8C] rounded font-mono font-normal">
-                  SOC-T2
+                  SOC
                 </span>
               </p>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-tight">Senior Threat Analyst</p>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-tight">Analyst & Defense AI</p>
             </div>
           </div>
 
           {isProfileOpen && (
             <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-[#1A1F2B] border border-gray-200 dark:border-white/10 z-50 p-1 text-xs text-gray-900 dark:text-white animate-in fade-in-50 zoom-in-95 duration-150">
               <div className="px-3 py-2 border-b border-gray-200 dark:border-white/10 font-semibold xl:hidden">
-                <p className="text-xs text-gray-900 dark:text-white">Alex Vance</p>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400">Senior Threat Analyst</p>
+                <p className="text-xs text-gray-900 dark:text-white">ADMIN</p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400">Analyst & Defense AI</p>
               </div>
               <button
                 onClick={() => setIsProfileOpen(false)}
