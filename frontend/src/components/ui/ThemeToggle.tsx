@@ -8,34 +8,38 @@ export const ThemeToggle: React.FC = () => {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return <div className="w-14 h-7 rounded-full bg-gray-200 dark:bg-[#0D1526]" />;
 
-  // Return null on server and initial render to avoid hydration mismatch
-  if (!mounted) {
-    return null;
-  }
-
-  const currentTheme = resolvedTheme || theme || 'dark';
-  const isDark = currentTheme === 'dark';
-
-  const toggleTheme = () => {
-    setTheme(isDark ? 'light' : 'dark');
-  };
+  const isDark = (resolvedTheme || theme) === 'dark';
 
   return (
     <button
-      onClick={toggleTheme}
-      className="p-2 rounded-lg bg-gray-100 dark:bg-[#1A1F2B] hover:bg-gray-200 dark:hover:bg-[#252C3D] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-200 shadow-sm outline-none focus:outline-none focus:ring-0 border-transparent"
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className="relative flex items-center w-14 h-7 rounded-full border transition-all duration-300 focus:outline-none group"
+      style={{
+        background: isDark
+          ? 'linear-gradient(135deg, #1D4ED8, #0EA5E9)'
+          : 'linear-gradient(135deg, #e2e8f0, #cbd5e1)',
+        borderColor: isDark ? 'rgba(59,130,246,0.4)' : 'rgba(148,163,184,0.4)',
+        boxShadow: isDark ? '0 0 12px rgba(59,130,246,0.35)' : 'none',
+      }}
       aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
       title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >
-      {isDark ? (
-        <Sun className="w-4 h-4 text-[#EECC8C] transition-transform duration-300 rotate-0 hover:rotate-45" />
-      ) : (
-        <Moon className="w-4 h-4 text-indigo-600 transition-transform duration-300 rotate-0 hover:-rotate-12" />
-      )}
+      {/* Sliding knob */}
+      <span
+        className="absolute flex items-center justify-center w-5 h-5 rounded-full shadow-md transition-all duration-300"
+        style={{
+          left: isDark ? 'calc(100% - 1.5rem)' : '2px',
+          background: isDark ? '#fff' : '#1e40af',
+        }}
+      >
+        {isDark
+          ? <Moon className="w-3 h-3 text-blue-600" />
+          : <Sun className="w-3 h-3 text-white" />
+        }
+      </span>
     </button>
   );
 };

@@ -11,62 +11,45 @@ const config: Config = {
     extend: {
       colors: {
         background: {
-          light: "#F9FAFB",
-          dark: "#0B0F19",
-          DEFAULT: "#0B0F19",
+          light: "#F0F4FF",
+          dark: "#030712",
+          DEFAULT: "#030712",
         },
         surface: {
           light: "#FFFFFF",
-          dark: "#1A1F2B",
-          DEFAULT: "#1A1F2B",
-          hoverLight: "#F3F4F6",
-          hoverDark: "#1E2532",
+          dark: "#0D1526",
+          DEFAULT: "#0D1526",
+          hoverLight: "#EBF0FF",
+          hoverDark: "#162035",
         },
-        severity: {
-          high: "#A36361",     // Muted Red - Critical/High Risk
-          med1: "#D3A29D",     // Dusty Pink - Medium/Warning
-          med2: "#E8B298",     // Peach - Medium/Warning
-          low1: "#9EABA2",     // Sage Green - Low/Safe/Normal
-          low2: "#BDD1C5",     // Mint Green - Low/Safe/Normal
+        navy: {
+          50: "#F0F4FF",
+          100: "#E0E9FF",
+          200: "#C7D8FF",
+          300: "#A5BCFF",
+          400: "#7B96F5",
+          500: "#4F6DE8",
+          600: "#3B4FD4",
+          700: "#2E3FB8",
+          800: "#1E2B7A",
+          900: "#0D1526",
+          950: "#030712",
         },
-        accent: {
-          DEFAULT: "#EECC8C",  // Soft Yellow (Interactive/Highlight)
-          hover: "#F3D9A5",
-          muted: "rgba(238, 204, 140, 0.15)",
-        },
-        shield: {
-          bgDark: "#0B0F19",
-          bgLight: "#F9FAFB",
-          cardDark: "#1A1F2B",
-          cardLight: "#FFFFFF",
-          cardHoverDark: "#1E2532",
-          cardHoverLight: "#F3F4F6",
-          textDark: "#FFFFFF",
-          textLight: "#111827",
-          textMutedDark: "#9CA3AF",
-          textMutedLight: "#6B7280",
-          borderDark: "rgba(255, 255, 255, 0.07)",
-          borderLight: "rgba(0, 0, 0, 0.08)",
-          high: "#A36361",
-          medium: "#D3A29D",
-          warning: "#E8B298",
-          low: "#9EABA2",
-          safe: "#BDD1C5",
-          accent: "#EECC8C",
-        }
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "Inter", "sans-serif"],
+        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
       },
       borderRadius: {
         card: "12px",
         badge: "8px",
       },
       boxShadow: {
-        card: "0 4px 20px -2px rgba(0, 0, 0, 0.4)",
-        cardLight: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
-        glow: "0 0 15px -3px rgba(238, 204, 140, 0.2)",
-        glowRed: "0 0 15px -3px rgba(163, 99, 97, 0.25)",
+        card: "0 4px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.04)",
+        cardLight: "0 1px 4px rgba(0, 0, 0, 0.08)",
+        glow: "0 0 20px rgba(59, 130, 246, 0.35), 0 0 40px rgba(6, 182, 212, 0.12)",
+        glowRed: "0 0 16px rgba(239, 68, 68, 0.3)",
+        glowCyan: "0 0 16px rgba(6, 182, 212, 0.3)",
+        glowGreen: "0 0 16px rgba(16, 185, 129, 0.3)",
       }
     },
   },

@@ -2,7 +2,7 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-export type SeverityLevel = 'low' | 'medium' | 'high' | 'normal' | 'suspicious' | 'malicious';
+export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical' | 'normal' | 'suspicious' | 'malicious';
 
 export interface SeverityBadgeProps {
   level: SeverityLevel | string;
@@ -17,48 +17,36 @@ export const SeverityBadge: React.FC<SeverityBadgeProps> = ({
   className,
   showDot = true,
 }) => {
-  const normalizedLevel = (level || 'low').toLowerCase();
+  const n = (level || 'low').toLowerCase();
 
-  let text = label;
-  let bgClass = 'bg-[#9EABA2]/20';
-  let textClass = 'text-[#5F6F65] dark:text-[#BDD1C5]';
-  let dotClass = 'bg-[#9EABA2] dark:bg-[#BDD1C5]';
-  let borderClass = 'border-[#9EABA2]/30';
+  let severityClass = 'severity-low';
+  let text = label || 'LOW';
 
-  if (normalizedLevel === 'high' || normalizedLevel === 'critical' || normalizedLevel === 'malicious') {
-    text = text || (normalizedLevel === 'malicious' ? 'Malicious' : 'HIGH');
-    bgClass = 'bg-[#A36361]/20';
-    textClass = 'text-[#A36361]';
-    dotClass = 'bg-[#A36361]';
-    borderClass = 'border-[#A36361]/30';
-  } else if (normalizedLevel === 'medium' || normalizedLevel === 'warning' || normalizedLevel === 'suspicious') {
-    text = text || (normalizedLevel === 'suspicious' ? 'Suspicious' : 'MEDIUM');
-    bgClass = 'bg-[#E8B298]/20';
-    textClass = 'text-[#C47B5E] dark:text-[#E8B298]';
-    dotClass = 'bg-[#E8B298]';
-    borderClass = 'border-[#E8B298]/30';
+  if (n === 'critical') {
+    severityClass = 'severity-critical';
+    text = label || 'CRITICAL';
+  } else if (n === 'high' || n === 'malicious') {
+    severityClass = 'severity-high';
+    text = label || (n === 'malicious' ? 'MALICIOUS' : 'HIGH');
+  } else if (n === 'medium' || n === 'warning' || n === 'suspicious') {
+    severityClass = 'severity-medium';
+    text = label || (n === 'suspicious' ? 'SUSPICIOUS' : 'MEDIUM');
   } else {
-    // low / safe / normal
-    text = text || (normalizedLevel === 'normal' ? 'Normal' : 'LOW');
-    bgClass = 'bg-[#9EABA2]/20';
-    textClass = 'text-[#5F6F65] dark:text-[#BDD1C5]';
-    dotClass = 'bg-[#9EABA2] dark:bg-[#BDD1C5]';
-    borderClass = 'border-[#9EABA2]/30';
+    severityClass = 'severity-low';
+    text = label || (n === 'normal' ? 'NORMAL' : 'LOW');
   }
 
   return (
     <span
       className={twMerge(
         clsx(
-          'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border tracking-wide uppercase',
-          bgClass,
-          textClass,
-          borderClass,
+          'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border tracking-wider uppercase font-mono',
+          severityClass,
           className
         )
       )}
     >
-      {showDot && <span className={clsx('w-1.5 h-1.5 rounded-full shrink-0', dotClass)} />}
+      {showDot && <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-current" />}
       <span>{text}</span>
     </span>
   );

@@ -63,6 +63,13 @@ if _LIVE_MONITORING_AVAILABLE:
         tags=["live-monitoring"],
     )
 
+# v2 Live Monitoring and AWS S3 Archival router
+try:
+    from backend.routers import v2_monitoring
+    app.include_router(v2_monitoring.router, prefix="/api/v2", tags=["v2-live-monitoring"])
+except Exception as _v2_err:
+    logger.warning("v2_monitoring router failed to load: %s", _v2_err)
+
 
 @app.get("/")
 async def root():

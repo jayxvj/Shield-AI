@@ -14,7 +14,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#F9FAFB] dark:bg-[#0B0F19] text-[#111827] dark:text-white transition-colors duration-200">
+    <div className="flex h-screen w-full overflow-hidden transition-colors duration-300" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       {/* Sidebar on the left */}
       <Sidebar 
         currentTab={currentTab} 

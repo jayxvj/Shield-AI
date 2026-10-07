@@ -1,207 +1,147 @@
-# AI Security Threat Detection System
+# Shield-AI: Live Threat Detection & AWS S3 Archival Sentinel
 
-A self-evolving security ecosystem where AI autonomously detects, explains, and responds to cyber threats faster than attackers can adapt.
+Shield-AI is a real-time autonomous network threat detection and live monitoring system. Scored flows are evaluated via statistical and machine learning feature extraction, streamed in real time to a single-pane live monitoring dashboard, and every malicious activity record is archived as an immutable JSONL object into an **Amazon Web Services (AWS) S3 bucket**.
 
-## Product Vision
+---
 
-Create a self-evolving security ecosystem where AI autonomously detects, explains, and responds to cyber threats faster than attackers can adapt, fundamentally shifting the cybersecurity advantage to defenders.
+## 🚀 Key Features
 
-## Target Audience
+- **Single-Page Live Threat Monitor**: Focused, single-page operations dashboard with real-time SSE telemetry push, dynamic timeline area chart, attack classification donut chart, and active risk scoring.
+- **AWS S3 Malicious Activity Archival**: Every detected attack is archived to Amazon S3 in append-only JSONL format (`alerts/YYYY/MM/DD/HH/{alert_id}.jsonl`) for compliance, auditing, and serverless querying via AWS Athena. Includes automated local disk archive fallback.
+- **Sensor Agent Architecture (`sensor_agent.py`)**: Solves cloud network capture constraints by decoupling packet capture from API serving. Runs on local hosts, branch routers, or VPC gateways and ships scored flow batches over authenticated HTTPS.
+- **Explainable AI (SHAP Waterfall)**: Provides attribution weights for every flagged anomaly (flow packet burst rate, inter-arrival time uniformity, byte entropy, port scanning) with actionable defensive mitigation playbooks.
+- **Deployment Verification Diagnostics (`/api/v2/health`)**: One-click verification that checks backend status, database persistence, S3 bucket reachability, and sensor connectivity.
 
-- Security Operations Centers (SOCs)
-- Managed Security Service Providers (MSSPs)
-- Mid-to-large enterprises with dedicated security teams
-- Organizations in regulated industries requiring advanced threat detection and compliance
+---
 
-## Core Features
+## 🏗️ Architecture
 
-- **Threat Detection**: Real-time detection and logging of security threats
-- **CRUD Operations**: Complete Create, Read, Update, Delete operations for threat management
-- **Threat Classification**: Automatic severity and status classification
-- **API-First Design**: RESTful API for integration with existing security tools
-
-## Technology Stack
-
-- **Backend**: FastAPI (Python)
-- **Database**: SQLite (easily upgradeable to PostgreSQL)
-- **ORM**: SQLAlchemy
-- **Validation**: Pydantic
-- **Architecture**: Modular Monolith
-
-## Prerequisites
-
-- Python 3.9 or higher
-- pip (Python package manager)
-
-## Installation
-
-1. Clone the repository or navigate to the project directory
-
-2. Create a virtual environment:
-```bash
-python -m venv venv
+```
+┌─────────────────────────────────────────────────────────────┐
+│                       SENSOR AGENT                          │
+│  (Runs on network host / gateway / VPC or in simulation)    │
+│  sensor_agent.py                                            │
+│    Scapy Sniff() / Simulation → Feature Extractor → ML Scorer
+│    POST /api/v2/ingest (HTTPS + API Key)                    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Batched Ingestion (every 3s)
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      BACKEND (FastAPI)                      │
+│                                                             │
+│  • POST /api/v2/ingest       ← Ingests sensor flow batches  │
+│  • GET  /api/v2/stream       ← Real-time SSE alert stream   │
+│  • GET  /api/v2/stats        ← 60s sliding window telemetry │
+│  • GET  /api/v2/alerts       ← Paginated alerts query       │
+│  • GET  /api/v2/health       ← Deployment health diagnostics│
+│                                                             │
+│  [PostgreSQL / SQLite]       [AWS S3 Bucket Archive]        │
+│  Persistent Alert Records    alerts/YYYY/MM/DD/HH/*.jsonl   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ SSE Stream & REST
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│              SINGLE-PAGE FRONTEND (Next.js 14)              │
+│  • Live Telemetry KPIs (Packets/s, Flows, Risk Gauge)       │
+│  • Real-time Traffic Timeline & Classification Donut        │
+│  • Live Streaming Threat Table with S3 Archive Links        │
+│  • XAI (SHAP) & S3 Inspector Drawer                         │
+│  • Interactive Attack Simulator & S3 Archival Trigger       │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-3. Activate the virtual environment:
-```bash
-# On Linux/Mac
-source venv/bin/activate
+---
 
-# On Windows
-venv\Scripts\activate
+## ⚡ Quick Start
+
+### 1. Install Backend Dependencies
+```bash
+python -m pip install -r backend/requirements.txt
 ```
 
-4. Install dependencies:
-```bash
-pip install -r backend/requirements.txt
-```
-
-5. Create environment file:
+### 2. Configure Environment (`.env`)
 ```bash
 cp .env.example .env
 ```
+Fill in your AWS S3 and database credentials:
+```env
+S3_BUCKET=shield-ai-threat-archive
+AWS_ACCESS_KEY_ID=your-aws-access-key-id
+AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
+AWS_REGION=us-east-1
+SENSOR_API_KEY=shield-sensor-secret-key
+```
+*(If AWS credentials are not set, Shield-AI automatically uses persistent local JSONL storage at `./s3_archive` without crashing).*
 
-6. Edit `.env` file and update configuration as needed (especially SECRET_KEY for production)
-
-## Running the Application
-
-### Development Mode
-
-Run the application with auto-reload:
-
+### 3. Run Backend Server
 ```bash
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
+- API Docs: `http://localhost:8000/docs`
+- Health Check: `http://localhost:8000/api/v2/health`
 
-### Production Mode
-
+### 4. Run Frontend Dashboard
 ```bash
-uvicorn backend.main:app --host 0.0.0.0 --port 8000 --workers 4
+cd frontend
+npm install
+npm run dev
 ```
+Open `http://localhost:3000` to access the Single-Page Live Threat Monitor.
 
-The API will be available at: `http://localhost:8000`
-
-## API Documentation
-
-Once the application is running, access the interactive API documentation:
-
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-
-## API Endpoints
-
-### Threats
-
-- `POST /api/v1/threats/` - Create a new threat detection
-- `GET /api/v1/threats/` - List all threats (with optional filtering)
-- `GET /api/v1/threats/{threat_id}` - Get a specific threat
-- `PUT /api/v1/threats/{threat_id}` - Update a threat
-- `DELETE /api/v1/threats/{threat_id}` - Delete a threat
-
-### Query Parameters for Listing
-
-- `skip`: Number of records to skip (pagination)
-- `limit`: Maximum number of records to return
-- `severity`: Filter by severity (critical, high, medium, low, info)
-- `status_filter`: Filter by status (detected, analyzing, mitigated, resolved, false_positive)
-
-### Example Request
-
-Create a new threat:
-
+### 5. Start Sensor Agent (Network Telemetry)
+In another terminal:
 ```bash
-curl -X POST "http://localhost:8000/api/v1/threats/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "threat_type": "SQL Injection",
-    "severity": "high",
-    "source_ip": "192.168.1.100",
-    "destination_ip": "10.0.0.50",
-    "description": "Detected SQL injection attempt in login form",
-    "confidence_score": 0.95
-  }'
+# High-fidelity realistic attack simulation mode (works anywhere without root):
+python sensor_agent.py --simulate --api-url http://localhost:8000
+
+# OR Live packet capture on network interface (requires admin/root):
+python sensor_agent.py --interface eth0 --api-url http://localhost:8000
 ```
 
-## Project Structure
+---
 
+## 🛡️ S3 Archival Format
+
+Every malicious activity record is archived as an individual JSONL line in:
+`s3://<S3_BUCKET>/alerts/YYYY/MM/DD/HH/<alert_id>.jsonl`
+
+Sample S3 JSONL payload:
+```json
+{
+  "alert_id": "LM-48291",
+  "timestamp": "2026-10-06T10:45:00.123456",
+  "source_ip": "185.220.101.5",
+  "destination_ip": "10.0.0.1",
+  "source_port": 49152,
+  "destination_port": 80,
+  "protocol": "TCP",
+  "flow_duration_ms": 78.4,
+  "bytes_transferred": 420000,
+  "packets_in_flow": 890,
+  "is_attack": true,
+  "attack_type": "DoS",
+  "confidence": 96.2,
+  "risk_score": 94,
+  "anomaly_score": 0.89,
+  "severity": "CRITICAL",
+  "shap_features": [
+    {"feature": "flow_packets_per_sec", "display_name": "Flow Packets/s", "impact": 0.52, "impact_pct": 52},
+    {"feature": "flow_bytes_per_sec", "display_name": "Flow Bytes/s", "impact": 0.31, "impact_pct": 31}
+  ],
+  "human_explanation": "Volumetric DoS flood detected from 185.220.101.5.",
+  "recommended_actions": [
+    "Apply rate limiting for source 185.220.101.5",
+    "Block IP at border firewall",
+    "Verify packet trace in S3 archive"
+  ]
+}
 ```
-.
-├── backend/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI application entry point
-│   ├── config.py            # Configuration management
-│   ├── database.py          # Database connection and session
-│   ├── models.py            # SQLAlchemy models
-│   ├── schemas.py           # Pydantic schemas for validation
-│   └── routers/
-│       ├── __init__.py
-│       └── threats.py       # Threat management endpoints
-├── .env.example             # Environment variables template
-├── README.md                # This file
-└── requirements.txt         # Python dependencies
-```
 
-## Architecture Overview
+---
 
-The application follows a **Modular Monolith** architecture with clear separation of concerns:
+## 💡 System Improvement Suggestions
 
-- **Routers**: Handle HTTP requests and responses
-- **Models**: Define database schema using SQLAlchemy ORM
-- **Schemas**: Validate input/output data using Pydantic
-- **Database**: Manage database connections and sessions
-- **Config**: Centralized configuration management
-
-## Database Schema
-
-### Threat Model
-
-- `id`: Primary key
-- `threat_type`: Type of threat detected
-- `severity`: Threat severity level (critical, high, medium, low, info)
-- `status`: Current status (detected, analyzing, mitigated, resolved, false_positive)
-- `source_ip`: Source IP address
-- `destination_ip`: Destination IP address
-- `description`: Detailed threat description
-- `ai_analysis`: AI-generated analysis (optional)
-- `confidence_score`: Detection confidence (0.0 to 1.0)
-- `detected_at`: Timestamp of detection
-- `updated_at`: Last update timestamp
-- `resolved_at`: Resolution timestamp
-- `mitigation_action`: Actions taken to mitigate
-
-## Environment Variables
-
-See `.env.example` for all available configuration options:
-
-- `DATABASE_URL`: Database connection string
-- `SECRET_KEY`: Secret key for security (change in production!)
-- `ALLOWED_ORIGINS`: CORS allowed origins
-- `DEBUG`: Enable debug mode (False in production)
-
-## Security Considerations
-
-- Change `SECRET_KEY` in production
-- Use PostgreSQL or MySQL for production instead of SQLite
-- Implement authentication and authorization
-- Enable HTTPS in production
-- Configure proper CORS origins
-- Implement rate limiting
-- Add input sanitization for all endpoints
-
-## Future Enhancements
-
-- AI-powered threat analysis
-- Real-time threat monitoring dashboard
-- Integration with SIEM systems
-- Automated response mechanisms
-- Machine learning model for threat prediction
-- Multi-tenant support
-- Advanced analytics and reporting
-
-## License
-
-Proprietary - All rights reserved
-
-## Support
-
-For issues and questions, please contact your security operations team.
+1. **AWS Athena Query Table**: Create an Athena table partitioned by year/month/day/hour directly on the S3 bucket to run serverless SQL analytics across billions of historical threats.
+2. **S3 Event-Driven Lambda Notifications**: Configure S3 ObjectCreated triggers to execute an AWS Lambda function that alerts on-call engineers via Slack/PagerDuty for CRITICAL alerts.
+3. **Continuous ML Retraining Pipeline**: Build a retraining job that downloads verified false-positive/confirmed attack payloads from S3 and retrains XGBoost decision trees.
+4. **VPC Sensor Fleet**: Deploy `sensor_agent.py` as a lightweight container in ECS/Kubernetes across diverse VPC subnets for multi-region perimeter monitoring.

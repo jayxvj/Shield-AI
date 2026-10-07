@@ -30,9 +30,20 @@ class Settings(BaseSettings):
     # API
     API_V1_PREFIX: str = "/api/v1"
 
+    # AWS S3 Settings for Malicious Activity Archival
+    S3_BUCKET: str = "shield-ai-threat-archive"
+    AWS_ACCESS_KEY_ID: str = ""
+    AWS_SECRET_ACCESS_KEY: str = ""
+    AWS_REGION: str = "us-east-1"
+    S3_LOCAL_FALLBACK_DIR: str = "./s3_archive"
+
+    # Sensor Ingestion Security
+    SENSOR_API_KEY: str = "shield-sensor-secret-key"
+
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "allow"
 
 
 settings = Settings()

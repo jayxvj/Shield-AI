@@ -153,3 +153,103 @@ export const threatsApi = {
     return fetch('/api/backend/health').then((r) => r.json());
   },
 };
+
+// ── V2 Live Monitoring & S3 Archival API ────────────────────────────────────
+
+export interface V2Alert {
+  alert_id: string;
+  timestamp: string;
+  source_ip: string;
+  destination_ip: string;
+  source_port?: number;
+  destination_port?: number;
+  protocol: string;
+  flow_duration_ms?: number;
+  bytes_transferred?: number;
+  packets_in_flow?: number;
+  is_attack: boolean;
+  attack_type: string;
+  confidence: number;
+  risk_score: number;
+  anomaly_score: number;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  s3_key?: string | null;
+  s3_storage?: string | null;
+  s3_url?: string | null;
+  shap_features?: Array<{
+    feature: string;
+    display_name: string;
+    impact: number;
+    impact_pct: number;
+  }>;
+  human_explanation?: string;
+  recommended_actions?: string[];
+}
+
+export interface V2Stats {
+  sensor_connected: boolean;
+  sensor_id: string;
+  last_sensor_ping?: string | null;
+  total_flows: number;
+  normal_flows: number;
+  suspicious_flows: number;
+  packets_per_second: number;
+  flows_per_second: number;
+  top_attack_type: string;
+  current_risk_score: number;
+  anomaly_rate_pct: number;
+  total_s3_archived: number;
+  s3_bucket: string;
+  timeline: Array<{
+    time: string;
+    normal: number;
+    suspicious: number;
+  }>;
+}
+
+export interface V2Health {
+  status: string;
+  app: string;
+  version: string;
+  db: string;
+  s3: {
+    status: string;
+    bucket: string;
+    connected?: boolean;
+    error?: string;
+    message?: string;
+  };
+  sensor_connected: boolean;
+  last_sensor_ping?: string | null;
+  total_ingested_flows: number;
+  total_malicious_archived: number;
+}
+
+export const v2Api = {
+  getHealth: async (): Promise<V2Health> => {
+    const res = await fetch('/api/backend/api/v2/health');
+    if (!res.ok) throw new Error(`Health check failed: ${res.status}`);
+    return res.json();
+  },
+  getStats: async (): Promise<V2Stats> => {
+    const res = await fetch('/api/backend/api/v2/stats');
+    if (!res.ok) throw new Error(`Stats fetch failed: ${res.status}`);
+    return res.json();
+  },
+  getAlerts: async (limit = 50): Promise<V2Alert[]> => {
+    const res = await fetch(`/api/backend/api/v2/alerts?limit=${limit}`);
+    if (!res.ok) throw new Error(`Alerts fetch failed: ${res.status}`);
+    return res.json();
+  },
+  simulateFlow: async (isAttack = true, attackType = 'DoS'): Promise<{ message: string; alert: V2Alert }> => {
+    const res = await fetch(`/api/backend/api/v2/simulate-flow?is_attack=${isAttack}&attack_type=${encodeURIComponent(attackType)}`, {
+      method: 'POST',
+    });
+    if (!res.ok) throw new Error(`Simulation failed: ${res.status}`);
+    return res.json();
+  },
+  createEventSource: (): EventSource => {
+    return new EventSource('/api/backend/api/v2/stream');
+  },
+};
+
